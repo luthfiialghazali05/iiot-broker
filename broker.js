@@ -20,6 +20,35 @@ const WS_PORT = 1884;
 
 // --- ROUTING LOGIC ---
 aedes.on('publish', function (packet, client) {
+  // 2. Buat Objek Payload Inti
+  const payloaddummy = {
+    "Message": "Anjay"
+};
+
+// 3. Tambahkan Timestamp (Data Enrichment)
+const now = new Date();
+payloadObject.timestamp = now.toISOString(); 
+
+// 4. Tentukan Topic Tujuan
+const topicdummy = `plc/hasil`; 
+
+// 5. Konversi Objek JSON menjadi string
+const payloadString = JSON.stringify(payloaddummy);
+
+// 6. Publikasikan ke Broker Aedes
+aedes.publish({
+    topic: topicdummy,
+    payload: payloadString,
+    qos: 1, 
+    retain: false
+}, (err) => {
+    if (err) {
+        console.error(`[MQTT_ERROR] Gagal memublikasikan topik ${topic}:`, err);
+    } else {
+        console.log(`[PLC_HANDLER] Berhasil memublikasikan: ${topic}, Payload: ${payloadString}`);
+    }
+});
+
   // 1. Ignore internal system messages (client is null)
   if (!client) return;
 
